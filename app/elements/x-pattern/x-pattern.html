@@ -129,7 +129,7 @@
       },
 
       _nameChanged: function(name) {
-        this.$.indicator.style.background = this.$.colors.get(name);
+        this.$.indicator.style.background = this.$.colors.getColor(name);
       },
 
       _computeHideExpression(name, expression) {
