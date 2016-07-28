@@ -10,10 +10,24 @@
         background: var(--secondary-background-color);
       }
     </style>
+    <ul>
+      <li>This is an item.</li>
+      <li>This is an item.</li>
+      <li>This is an item.</li>
+      <li>This is an item.</li>
+      <li>This is an item.</li>
+      <li>This is an item.</li>
+    </ul>
   </template>
   <script>
     Polymer({
-      is: "x-graph"
+      is: "x-graph",
+
+      ready: function() {
+        d3.select(this).selectAll("li").style("color", function(d, i) {
+          return i % 2 ? "#CCC" : "#999";
+        });
+      }
     });
   </script>
 </dom-module>
