@@ -24,13 +24,16 @@ function generate(wormFile, patternFile) {
     return arc;
   });
 
-  // Calculate the number of matches per arc for each pattern.
   patterns = patterns.map(function(pattern) {
+
+    // Calculate matches per arc.
     pattern.matches = arcs.map(function(arc) {
-      var regex = new RegExp(pattern.expression);
+      var regex = new RegExp(pattern.expression, 'g');
       var matches = arc.text.match(regex);
       return !matches ? 0 : matches.length;
     });
+
+    // Calculate total match count.
     pattern.count = pattern.matches.reduce(function(sum, x) {
       return sum + x;
     }, 0);
