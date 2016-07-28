@@ -11,7 +11,7 @@
         }
         var colors = this._getColors();
         var index = this._calculateHash(string);
-        index = index % colors.length;
+        index = this._mod(index, colors.length);
         return colors[index];
       },
 
@@ -25,6 +25,10 @@
           hash |= 0; // Convert to 32bit integer
         }
         return hash;
+      },
+
+      _mod: function (x, n) {
+        return ((x % n) + n) % n;
       },
 
       _getColors: function () {
