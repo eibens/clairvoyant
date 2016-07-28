@@ -10,20 +10,17 @@
         background: var(--secondary-background-color);
       }
     </style>
-    <ul>
-      <li>This is an item.</li>
-      <li>This is an item.</li>
-      <li>This is an item.</li>
-      <li>This is an item.</li>
-      <li>This is an item.</li>
-      <li>This is an item.</li>
-    </ul>
+    <svg></svg>
   </template>
   <script>
     Polymer({
       is: "x-graph",
 
       ready: function() {
+        var wordCounts = [
+          123, 516
+        ];
+
         d3.select(this).selectAll("li").style("color", function(d, i) {
           return i % 2 ? "#CCC" : "#999";
         });

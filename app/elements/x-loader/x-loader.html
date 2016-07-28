@@ -1,0 +1,30 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../x-app/x-app.html">
+
+<dom-module id="x-loader">
+  <template>
+    <iron-ajax
+      auto
+      url="[[url]]"
+      last-response="{{_data}}">
+    </iron-ajax>
+    <x-app
+      patterns="[[_data.patterns]]">
+    </x-app>
+  </template>
+  <script>
+    Polymer({
+      is: "x-loader",
+
+      properties: {
+        url: {
+          type: String
+        },
+        _data: {
+          type: Object
+        }
+      }
+    });
+  </script>
+</dom-module>

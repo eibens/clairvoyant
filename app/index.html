@@ -69,18 +69,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <!-- endbuild -->
 
   <template is="dom-bind" id="app">
-    <x-app
-      patterns='[
-          { "name": "Tattletale", "expression": "Tattletale", "count": 2854 },
-          { "name": "bug", "expression": "[Bb]ug", "count": 2742 },
-          { "name": "cape", "expression": "[Cc]ape", "count": 2742 },
-          { "name": "Grue", "expression": "Grue", "count": 1701 },
-          { "name": "Bitch", "expression": "Bitch", "count": 1147 },
-          { "name": "Dragon", "expression": "Dragon", "count": 1000 },
-          { "name": "fuck", "expression": "[Ff]uck[^i]", "count": 980 },
-          { "name": "Coil", "expression": "Coil", "count": 944 }
-        ]'>
-    </x-app>
+    <x-loader
+      url="data.json">
+    </x-loader>
   </template>
 
 </body>
