@@ -1,0 +1,95 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-input/iron-input.html">
+<link rel="import" href="../../bower_components/paper-styles/shadow.html">
+<link rel="import" href="../x-theme/x-theme.html">
+
+<dom-module id="x-search-field">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        align-items: center;
+        position: relative;
+
+      }
+      iron-icon {
+        position: absolute;
+        color: var(--primary-text-color);
+        left: 24px;
+        top: 0;
+        transition: color 0.28s;
+        margin: 12px 0;
+        pointer-events: none;
+      }
+      :host([active]) iron-icon {
+        color: var(--primary-background-color);
+      }
+
+      input {
+        background: var(--highlighted-color);
+        border: none;
+        outline: none;
+        border-radius: 4px;
+        height: 48px;
+        width: 100%;
+        color: var(--secondary-text-color);
+        padding: 0 16px 0 72px;
+        font-size: 16px;
+        font-weight: 100;
+        transition:
+          background 0.28s,
+          color 0.28s,
+          box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      :host([active]) input, input:focus {
+        background: white;
+        color: var(--primary-background-color);
+        @apply(--shadow-elevation-3dp);
+      }
+    </style>
+    <iron-icon
+      icon="icons:search">
+    </iron-icon>
+    <input
+      is="iron-input"
+      bind-value="{{value}}"
+      placeholder="Search Patterns"
+      on-focus="_handleFocus"
+      on-blur="_handleBlur">
+  </template>
+  <script>
+    Polymer({
+      is: "x-search-field",
+      properties: {
+        value: {
+          type: String,
+          notify: true
+        },
+
+        active: {
+          type: Boolean,
+          computed: "_computeActive(value, _hasFocus)",
+          reflectToAttribute: true
+        },
+
+        _hasFocus: {
+          type: Boolean
+        }
+      },
+
+      _computeActive: function(value, _hasFocus) {
+        return !!value || _hasFocus;
+      },
+
+      _handleFocus: function() {
+        this.set("_hasFocus", true);
+      },
+
+      _handleBlur: function() {
+        this.set("_hasFocus", false);
+      }
+    });
+  </script>
+</dom-module>

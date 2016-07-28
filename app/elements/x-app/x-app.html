@@ -1,12 +1,174 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-scroll-header-panel/paper-scroll-header-panel.html">
+<link rel="import" href="../../bower_components/paper-styles/shadow.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../x-graph/x-graph.html">
+<link rel="import" href="../x-pattern-list/x-pattern-list.html">
+<link rel="import" href="../x-search-field/x-search-field.html">
+<link rel="import" href="../x-theme/x-theme.html">
 
 <dom-module id="x-app">
   <template>
-    <h1>Hello World</h1>
+    <style>
+      :root {
+        --paper-toolbar-background: var(--paper-grey-900);
+        --graph-height: 240px;
+      }
+      :host {
+        @apply(--layout-fit);
+        display: flex;
+        flex-direction: column;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+      paper-header-panel {
+        @apply(--layout-fit);
+        background: var(--primary-background-color);
+      }
+      paper-toolbar h1, paper-toolbar h2 {
+        font-size: 18px;
+        font-weight: 400;
+      }
+      paper-toolbar h2 {
+        color: rgba(255, 255, 255, 0.54);
+      }
+      paper-toolbar h2::before {
+        content: "-";
+        margin: 0 8px;
+      }
+
+      x-graph {
+        height: var(--graph-height);
+      }
+
+      main {
+        display: flex;
+        flex-direction: column;
+        padding: 24px 32px;
+        box-sizing: border-box;
+      }
+
+      section {
+        display: flex;
+        flex-shrink: 0;
+        width: 100%;
+        flex-direction: column;
+        padding: 8px 16px;
+        box-sizing: border-box;
+        background: var(--secondary-background-color);
+        margin: 8px auto;
+        max-width: 1000px;
+        @apply(--shadow-transition);
+        @apply(--shadow-elevation-2dp);
+      }
+      section:hover {
+        @apply(--shadow-transition);
+        @apply(--shadow-elevation-8dp);
+      }
+      section > * {
+        display: flex;
+        margin: 8px 0;
+      }
+      section h3 {
+        font-size: 16px;
+        color: var(--disabled-text-color);
+        font-weight: 400;
+      }
+      section h3 span {
+        background: var(--divider-color);
+        border-radius: 2px;
+        font-size: 10px;
+        margin-left: 8px;
+        display: flex;
+        align-items: center;
+        padding: 0 4px;
+      }
+      section .placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 48px;
+        color: var(--disabled-text-color);
+        font-size: 14px;
+      }
+
+      @media(max-width: 767px) {
+        main {
+          padding: 4px 8px;
+        }
+        section {
+          margin: 4px auto;
+        }
+      }
+    </style>
+
+    <paper-header-panel>
+      <paper-toolbar>
+        <h1>Clairvoyant</h1>
+        <h2>Worm by Wildbow</h2>
+      </paper-toolbar>
+
+      <x-graph></x-graph>
+
+      <main>
+        <section id="selection">
+          <div
+            hidden$="[[_selectionEmpty]]"
+            class="placeholder">
+            <span>Select patterns from the list below.</span>
+          </div>
+          <x-pattern-list
+            hidden$="[[!_selectionEmpty]]"
+            items="{{patterns}}"
+            selected="true">
+          </x-pattern-list>
+        </section>
+
+        <section id="patterns">
+          <h3>All Patterns <span>[[patterns.length]]</span></h3>
+          <x-search-field
+            value="{{query}}">
+          </x-search-field>
+          <x-pattern-list
+            hidden$="[[!_]]"
+            items="{{patterns}}"
+            query="[[query]]">
+          </x-pattern-list>
+        </section>
+      </main>
+    </paper-header-panel>
   </template>
+
   <script>
     Polymer({
-      is: 'x-app'
-    })
+      is: 'x-app',
+
+      properties: {
+        query: {
+          type: String,
+          value: ""
+        },
+
+        patterns: {
+          type: Array,
+          value: [],
+          notify: true
+        },
+
+        _selectionEmpty: {
+          type: Boolean,
+          computed: "_computeSelectionEmpty(patterns.*)"
+        }
+      },
+
+      _computeSelectionEmpty: function() {
+        return this.patterns.filter(function(x) {
+          return x.selected;
+        }).length > 0;
+      }
+    });
   </script>
 </dom-module>

@@ -1,0 +1,103 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../x-pattern/x-pattern.html">
+
+<dom-module id="x-pattern-list">
+  <style>
+    :host {
+      display: flex;
+      flex: 1;
+    }
+    ul {
+      display: flex;
+      flex: 1;
+      flex-flow: wrap;
+      list-style: none;
+      margin: -4px;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    li {
+      padding: 4px;
+      box-sizing: border-box;
+    }
+
+    @media (min-width: 1000px) {
+      li { width: calc(100% / 5); }
+    }
+    @media (max-width: 1000px) {
+      li { width: calc(100% / 4); }
+    }
+    @media (max-width: 800px) {
+      li { width: calc(100% / 3); }
+    }
+    @media (max-width: 600px) {
+      li { width: calc(100% / 2); }
+    }
+    @media (max-width: 400px) {
+      li { width: calc(100% / 1); }
+    }
+  </style>
+
+  <template>
+    <ul>
+      <template
+        is="dom-repeat"
+        id="repeat"
+        items="{{items}}"
+        observe="selected"
+        sort="_sort"
+        filter="_filter">
+        <li>
+          <x-pattern
+            name="[[item.name]]"
+            expression="[[item.expression]]"
+            count="[[item.count]]"
+            selected="{{item.selected}}">
+          </x-pattern>
+        </li>
+      </template>
+    </ul>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-pattern-list",
+
+      properties: {
+        items: {
+          type: Array,
+          notify: true
+        },
+
+        query: {
+          type: String,
+          value: "",
+          observer: "_filterChanged"
+        },
+
+        selected: {
+          type: Boolean,
+          observer: "_filterChanged"
+        }
+      },
+
+      _filterChanged: function() {
+        this.$.repeat.render();
+      },
+
+      _sort: function(a, b) {
+        var sort = b.count - a.count;
+        if (sort != 0) return sort;
+        return a.name.localeCompare(b.name);
+      },
+
+      _filter: function(item) {
+        if (this.selected && !item.selected) return false;
+        if (!this.query.trim()) return true;
+        var name = item.name.toLowerCase();
+        var query = this.query.trim().toLowerCase();
+        return name.indexOf(query) >= 0;
+      }
+    });
+  </script>
+</dom-module>

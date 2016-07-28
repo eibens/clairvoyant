@@ -1,0 +1,140 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-ripple/paper-ripple.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../x-color-selector/x-color-selector.html">
+<link rel="import" href="../x-theme/x-theme.html">
+
+<dom-module id="x-pattern">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        flex: 1;
+        position: relative;
+        height: 48px;
+        box-sizing: border-box;
+        color: var(--primary-text-color);
+        background: var(--primary-color);
+        cursor: pointer;
+      }
+      :host([selected]) {
+
+      }
+
+      #indicator {
+        @apply(--layout-fit);
+        background: red;
+        height: 100%;
+        width: 4px;
+        transition: width 0.2s;
+      }
+      :host([selected]) #indicator {
+        width: 100%;
+      }
+
+      .main {
+        @apply(--layout-fit);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 8px 0 12px;
+        transition: padding 0.2s;
+      }
+      :host([selected]) .main {
+        padding-left: 8px;
+      }
+
+      .text {
+        display: flex;
+        flex-direction: column;
+      }
+      .text h1, h2 {
+        @apply(--paper-font-common-nowrap);
+        margin: 0;
+      }
+      .text h1 {
+        @apply(--paper-font-common-nowrap);
+        margin: 0;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 14px;
+      }
+      .text h2 {
+        @apply(--paper-font-common-code);
+        @apply(--paper-font-common-nowrap);
+        color: var(--disabled-text-color);
+        font-size: 9px;
+        font-weight: 400;
+        margin: 2px 0 0 0;
+      }
+
+      output {
+        @apply(--paper-font-common-nowrap);
+        font-size: 24px;
+        font-weight: 100;
+      }
+    </style>
+
+    <x-color-selector
+      id="colors">
+    </x-color-selector>
+
+    <div id="indicator"></div>
+    <paper-ripple></paper-ripple>
+    <div class="main">
+      <div class="text">
+        <h1>[[name]]</h1>
+        <h2 hidden$="[[_hideExpression]]">[[expression]]</h2>
+      </div>
+      <output>[[count]]</output>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-pattern",
+
+      properties: {
+        name: {
+          type: String,
+          observer: "_nameChanged"
+        },
+
+        expression: {
+          type: String
+        },
+
+        count: {
+          type: Number
+        },
+
+        selected: {
+          type: Boolean,
+          notify: true,
+          reflectToAttribute: true
+        },
+
+        _hideExpression: {
+          type: Boolean,
+          computed: "_computeHideExpression(name, expression)"
+        }
+      },
+
+      listeners: {
+        "tap": "_handleTap"
+      },
+
+      _handleTap: function() {
+        this.set("selected", !this.selected);
+      },
+
+      _nameChanged: function(name) {
+        this.$.indicator.style.background = this.$.colors.get(name);
+      },
+
+      _computeHideExpression(name, expression) {
+        return name == expression;
+      }
+    });
+  </script>
+</dom-module>
