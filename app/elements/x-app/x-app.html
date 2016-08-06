@@ -4,7 +4,7 @@
 <link rel="import" href="../../bower_components/paper-scroll-header-panel/paper-scroll-header-panel.html">
 <link rel="import" href="../../bower_components/paper-styles/shadow.html">
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
-<link rel="import" href="../x-graph/x-graph.html">
+<link rel="import" href="../x-bar-chart/x-bar-chart.html">
 <link rel="import" href="../x-pattern-list/x-pattern-list.html">
 <link rel="import" href="../x-search-field/x-search-field.html">
 <link rel="import" href="../x-theme/x-theme.html">
@@ -14,7 +14,7 @@
     <style>
       :root {
         --paper-toolbar-background: var(--paper-grey-900);
-        --graph-height: 240px;
+        --graph-height: 320px;
       }
       :host {
         @apply(--layout-fit);
@@ -40,7 +40,7 @@
         margin: 0 8px;
       }
 
-      x-graph {
+      #chart {
         height: var(--graph-height);
       }
 
@@ -111,7 +111,11 @@
         <h2>Worm by Wildbow</h2>
       </paper-toolbar>
 
-      <x-graph></x-graph>
+      <x-bar-chart
+        id="chart"
+        sections="[[sections]]"
+        patterns="[[_selectedPatterns]]">
+      </x-bar-chart>
 
       <main>
         <section id="selection">
@@ -152,16 +156,29 @@
           value: ""
         },
 
+        sections: {
+          type: Array
+        },
+
         patterns: {
+          type: Array
+        },
+
+        _selectedPatterns: {
           type: Array,
-          value: [],
-          notify: true
+          computed: "_computeSelectedPatterns(patterns.*)"
         },
 
         _selectionEmpty: {
           type: Boolean,
           computed: "_computeSelectionEmpty(patterns.*)"
         }
+      },
+
+      _computeSelectedPatterns: function() {
+        return this.patterns.filter(function(x) {
+          return x.selected;
+        });
       },
 
       _computeSelectionEmpty: function() {
