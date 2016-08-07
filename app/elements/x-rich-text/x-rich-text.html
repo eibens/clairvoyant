@@ -1,0 +1,99 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-ripple/paper-ripple.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../x-color-selector/x-color-selector.html">
+<link rel="import" href="../x-theme/x-theme.html">
+
+<dom-module id="x-rich-text">
+  <style>
+    :host([has-matches]) {
+      transition: color 0.2s;
+      color: var(--disabled-text-color);
+    }
+    span.match {
+      text-decoration: underline;
+      color: var(--primary-text-color);
+    }
+  </style>
+  <template>
+    <!-- Make sure there is no white-space between the span elements. -->
+    <template
+      is="dom-repeat"
+      items="[[_parts]]"><span class$="[[item.type]]">[[item.value]]</span></template>
+  </template>
+  <script>
+    Polymer({
+      is: "x-rich-text",
+
+      properties: {
+        text: String,
+
+        query: {
+          type: String,
+          value: ""
+        },
+
+        hasMatches: {
+          type: Boolean,
+          computed: "_computeHasMatches(_matches.*)",
+          reflectToAttribute: true
+        },
+
+        _matches: {
+          type: Array,
+          computed: "_computeMatches(text, query)"
+        },
+
+        _parts: {
+          type: Array,
+          computed: "_computeParts(text, _matches.*)"
+        }
+      },
+
+      _computeParts: function(text, matchesChange) {
+        var parts = [];
+        var offset = 0;
+        matchesChange.base.forEach(function(match) {
+          if (offset < match.index) {
+            parts.push({
+              type: "",
+              value: text.substring(offset, match.index)
+            });
+            offset = match.index;
+          }
+          parts.push({
+            type: "match",
+            value: match[0]
+          });
+          offset += match[0].length;
+        });
+        if (offset < text.length) {
+          parts.push({
+            type: "",
+            value: text.substr(offset)
+          });
+        }
+        return parts;
+      },
+
+      _computeHasMatches: function(matchesChange) {
+        return matchesChange.base.length > 0;
+      },
+
+      _computeMatches: function(text, query) {
+        if (!query) return [];
+        // See: http://stackoverflow.com/a/6323598/925580
+        var regex = new RegExp(query, "gi");
+        var match;
+        var matches = [];
+        do {
+          match = regex.exec(text);
+          if (match) {
+            matches.push(match);
+          }
+        } while (match);
+        return matches;
+      }
+    })
+  </script>
+</dom-module>

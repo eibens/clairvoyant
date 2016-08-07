@@ -52,6 +52,7 @@
             expression="[[item.expression]]"
             count="[[item.count]]"
             selected="{{item.selected}}"
+            query="[[query]]"
             on-tap="_handleTap">
           </x-pattern>
         </li>
@@ -68,6 +69,10 @@
           type: Array,
           notify: true,
           observer: "update"
+        },
+
+        query: {
+          type: String
         },
 
         count: {

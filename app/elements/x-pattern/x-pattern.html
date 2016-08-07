@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/paper-ripple/paper-ripple.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
 <link rel="import" href="../x-color-selector/x-color-selector.html">
+<link rel="import" href="../x-rich-text/x-rich-text.html">
 <link rel="import" href="../x-theme/x-theme.html">
 
 <dom-module id="x-pattern">
@@ -80,7 +81,12 @@
     <paper-ripple></paper-ripple>
     <div class="main">
       <div class="text">
-        <h1>[[name]]</h1>
+        <h1>
+          <x-rich-text
+            text="[[name]]"
+            query="[[query]]">
+          </x-rich-text>
+        </h1>
         <h2 hidden$="[[_hideExpression]]">[[expression]]</h2>
       </div>
       <output>[[count]]</output>
@@ -109,6 +115,10 @@
           type: Boolean,
           notify: true,
           reflectToAttribute: true
+        },
+
+        query: {
+          type: String
         },
 
         _hideExpression: {
