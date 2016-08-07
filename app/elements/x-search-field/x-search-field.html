@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-input/iron-input.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/paper-styles/shadow.html">
 <link rel="import" href="../x-theme/x-theme.html">
 
@@ -9,18 +10,24 @@
   <template>
     <style>
       :host {
+        flex: 1;
         display: flex;
         align-items: center;
         position: relative;
-
+        height: 56px;
       }
+      :host > * {
+        @apply(--layout-fit);
+      }
+
       iron-icon {
+        z-index: 1;
         position: absolute;
         color: var(--primary-text-color);
         left: 24px;
         top: 0;
         transition: color 0.28s;
-        margin: 12px 0;
+        margin: 16px 0;
         pointer-events: none;
       }
       :host([active]) iron-icon {
@@ -32,10 +39,10 @@
         border: none;
         outline: none;
         border-radius: 4px;
-        height: 48px;
         width: 100%;
         color: var(--secondary-text-color);
         padding: 0 16px 0 72px;
+        box-sizing: border-box;
         font-size: 16px;
         font-weight: 100;
         transition:
@@ -49,9 +56,11 @@
         @apply(--shadow-elevation-3dp);
       }
     </style>
-    <iron-icon
-      icon="icons:search">
-    </iron-icon>
+    <div class="overlay">
+      <iron-icon
+        icon="icons:search">
+      </iron-icon>
+    </div>
     <input
       is="iron-input"
       bind-value="{{value}}"

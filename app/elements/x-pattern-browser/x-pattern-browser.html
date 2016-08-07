@@ -1,4 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../x-pattern-list/x-pattern-list.html">
 <link rel="import" href="../x-search-field/x-search-field.html">
 <link rel="import" href="../x-theme/x-theme.html">
@@ -22,13 +26,18 @@
       margin-bottom: 0;
     }
 
-    h3 {
-      display: flex;
-      font-size: 16px;
+    header {
+      justify-content: space-between;
+      align-items: center;
       color: var(--disabled-text-color);
+    }
+    header h3 {
+      display: flex;
+      margin: 0;
+      font-size: 16px;
       font-weight: 400;
     }
-    h3 span {
+    header h3 span {
       background: var(--divider-color);
       border-radius: 2px;
       font-size: 10px;
@@ -37,15 +46,49 @@
       align-items: center;
       padding: 0 4px;
     }
+
+    nav {
+      align-content: center;
+    }
+    nav paper-menu-button {
+      color: var(--primary-text-color);
+    }
+    nav paper-menu {
+      background: var(--secondary-background-color)
+    }
+    nav paper-item {
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    nav x-search-field {
+      margin-right: 16px;
+    }
   </style>
 
   <template>
-    <h3>All Patterns
-      <span>[[_count]]</span>
-    </h3>
-    <x-search-field
-      value="{{query}}">
-    </x-search-field>
+    <header>
+      <h3>All Patterns
+        <span>[[_count]]</span>
+      </h3>
+    </header>
+    <nav>
+      <x-search-field
+        value="{{query}}">
+      </x-search-field>
+      <paper-menu-button>
+        <paper-icon-button
+          icon="sort"
+          class="dropdown-trigger">
+        </paper-icon-button>
+        <paper-menu
+          class="dropdown-content"
+          attr-for-selected="data-key"
+          selected="{{_sortMode}}">
+          <paper-item data-key="count">Sort by count</paper-item>
+          <paper-item data-key="name">Sort by name</paper-item>
+        </paper-menu>
+      </paper-menu-button>
+    </nav>
     <x-pattern-list
       id="list"
       items="{{patterns}}"
@@ -72,10 +115,20 @@
           observer: "_update"
         },
 
+        alphabetical: {
+          type: Boolean,
+          observer: "_update"
+        },
+
         _count: Number,
         _empty: Boolean,
         _resultCount: Number,
-        _resultEmpty: Boolean
+        _resultEmpty: Boolean,
+
+        _sortMode: {
+          type: String,
+          observer: "_sortModeChanged"
+        }
       },
 
       ready: function() {
@@ -102,9 +155,15 @@
 
       _sort: function(a, b) {
         var nameSort = a.name.localeCompare(b.name);
+        if (this.alphabetical) return nameSort;
         var countSort = b.count - a.count;
         if (countSort != 0) return countSort;
         return nameSort;
+      },
+
+      _sortModeChanged: function(value) {
+        var byName = value == "name";
+        this.set("alphabetical", byName);
       }
     });
   </script>
