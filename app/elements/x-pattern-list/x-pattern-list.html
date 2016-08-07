@@ -44,7 +44,6 @@
         is="dom-repeat"
         id="repeat"
         items="{{items}}"
-        observe="selected"
         sort="_sort"
         filter="_filter">
         <li>
@@ -52,7 +51,8 @@
             name="[[item.name]]"
             expression="[[item.expression]]"
             count="[[item.count]]"
-            selected="{{item.selected}}">
+            selected="{{item.selected}}"
+            on-tap="_handleTap">
           </x-pattern>
         </li>
       </template>
@@ -66,37 +66,76 @@
       properties: {
         items: {
           type: Array,
-          notify: true
+          notify: true,
+          observer: "update"
         },
 
-        query: {
-          type: String,
-          value: "",
-          observer: "_filterChanged"
+        count: {
+          type: Number,
+          notify: true,
+          computed: "_count(items.*)"
         },
 
-        selected: {
+        empty: {
           type: Boolean,
-          observer: "_filterChanged"
+          notify: true,
+          computed: "_empty(count)"
+        },
+
+        result: {
+          type: Array,
+          notify: true,
+          readOnly: true
+        },
+
+        resultCount: {
+          type: Number,
+          notify: true,
+          computed: "_count(result.*)"
+        },
+
+        resultEmpty: {
+          type: Boolean,
+          notify: true,
+          computed: "_empty(resultCount)"
         }
       },
 
-      _filterChanged: function() {
+      update: function() {
         this.$.repeat.render();
+        this._setResult(this._computeResult());
       },
 
       _sort: function(a, b) {
-        var sort = b.count - a.count;
-        if (sort != 0) return sort;
-        return a.name.localeCompare(b.name);
+        return this.sort ? this.sort(a, b) : -1;
       },
 
-      _filter: function(item) {
-        if (this.selected && !item.selected) return false;
-        if (!this.query.trim()) return true;
-        var name = item.name.toLowerCase();
-        var query = this.query.trim().toLowerCase();
-        return name.indexOf(query) >= 0;
+      _filter: function(x) {
+        return this.filter ? this.filter(x) : true;
+      },
+
+      _count: function(change) {
+        return change.base ? change.base.length : 0;
+      },
+
+      _empty: function(count) {
+        return count == 0;
+      },
+
+      _computeResult: function() {
+        if (!this.items) return [];
+        var self = this;
+        return this.get("items").filter(function(x) {
+          return self._filter(x);
+        }).sort(function(a, b) {
+          return self._sort(a, b);
+        });
+      },
+
+      _handleTap: function(e) {
+        this.fire("item-tap", {
+          model: e.model
+        });
       }
     });
   </script>

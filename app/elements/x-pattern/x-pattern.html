@@ -117,14 +117,6 @@
         }
       },
 
-      listeners: {
-        "tap": "_handleTap"
-      },
-
-      _handleTap: function() {
-        this.set("selected", !this.selected);
-      },
-
       _nameChanged: function(name) {
         this.$.indicator.style.background = this.$.colors.getColor(name);
       },

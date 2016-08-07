@@ -5,8 +5,8 @@
 <link rel="import" href="../../bower_components/paper-styles/shadow.html">
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../x-bar-chart/x-bar-chart.html">
-<link rel="import" href="../x-pattern-list/x-pattern-list.html">
-<link rel="import" href="../x-search-field/x-search-field.html">
+<link rel="import" href="../x-pattern-browser/x-pattern-browser.html">
+<link rel="import" href="../x-pattern-selection/x-pattern-selection.html">
 <link rel="import" href="../x-theme/x-theme.html">
 
 <dom-module id="x-app">
@@ -51,12 +51,9 @@
         box-sizing: border-box;
       }
 
-      section {
-        display: flex;
-        flex-shrink: 0;
+      .section {
         width: 100%;
-        flex-direction: column;
-        padding: 8px 16px;
+        padding: 16px;
         box-sizing: border-box;
         background: var(--secondary-background-color);
         margin: 8px auto;
@@ -64,42 +61,16 @@
         @apply(--shadow-transition);
         @apply(--shadow-elevation-2dp);
       }
-      section:hover {
+      .section:hover {
         @apply(--shadow-transition);
         @apply(--shadow-elevation-8dp);
-      }
-      section > * {
-        display: flex;
-        margin: 8px 0;
-      }
-      section h3 {
-        font-size: 16px;
-        color: var(--disabled-text-color);
-        font-weight: 400;
-      }
-      section h3 span {
-        background: var(--divider-color);
-        border-radius: 2px;
-        font-size: 10px;
-        margin-left: 8px;
-        display: flex;
-        align-items: center;
-        padding: 0 4px;
-      }
-      section .placeholder {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 48px;
-        color: var(--disabled-text-color);
-        font-size: 14px;
       }
 
       @media(max-width: 767px) {
         main {
-          padding: 4px 8px;
+          padding: 8px;
         }
-        section {
+        .section {
           margin: 4px auto;
         }
       }
@@ -114,34 +85,29 @@
       <x-bar-chart
         id="chart"
         sections="[[sections]]"
-        patterns="[[_selectedPatterns]]">
+        patterns="[[selected]]">
       </x-bar-chart>
 
       <main>
-        <section id="selection">
-          <div
-            hidden$="[[_selectionEmpty]]"
-            class="placeholder">
-            <span>Select patterns from the list below.</span>
-          </div>
-          <x-pattern-list
-            hidden$="[[!_selectionEmpty]]"
-            items="{{patterns}}"
-            selected="true">
-          </x-pattern-list>
-        </section>
+        <array-selector
+          id="selector"
+          items="{{patterns}}"
+          selected="{{selected}}"
+          multi toggle>
+        </array-selector>
 
-        <section id="patterns">
-          <h3>All Patterns <span>[[patterns.length]]</span></h3>
-          <x-search-field
-            value="{{query}}">
-          </x-search-field>
-          <x-pattern-list
-            hidden$="[[!_]]"
-            items="{{patterns}}"
-            query="[[query]]">
-          </x-pattern-list>
-        </section>
+        <x-pattern-selection
+          class="section"
+          patterns="{{selected}}"
+          on-item-tap="_handlePatternTap">
+        </x-pattern-selection>
+
+        <x-pattern-browser
+          class="section"
+          patterns="{{patterns}}"
+          query="{{query}}"
+          on-item-tap="_handlePatternTap">
+        </x-pattern-browser>
       </main>
     </paper-header-panel>
   </template>
@@ -153,7 +119,7 @@
       properties: {
         query: {
           type: String,
-          value: ""
+          notify: true
         },
 
         sections: {
@@ -164,27 +130,24 @@
           type: Array
         },
 
-        _selectedPatterns: {
+        selected: {
           type: Array,
-          computed: "_computeSelectedPatterns(patterns.*)"
-        },
-
-        _selectionEmpty: {
-          type: Boolean,
-          computed: "_computeSelectionEmpty(patterns.*)"
+          notify: true
         }
       },
 
-      _computeSelectedPatterns: function() {
-        return this.patterns.filter(function(x) {
-          return x.selected;
-        });
-      },
+      _handlePatternTap: function(event) {
+        var model = event.detail.model;
+        var item = model.item;
+        var selector = this.$.selector;
 
-      _computeSelectionEmpty: function() {
-        return this.patterns.filter(function(x) {
-          return x.selected;
-        }).length > 0;
+        // Toggle selection.
+        selector.select(item);
+
+        // Mark pattern as selected.
+        var selected = selector.isSelected(item);
+        var index = this.patterns.indexOf(model.item);
+        this.set("patterns." + index + ".selected", selected);
       }
     });
   </script>
