@@ -3,6 +3,7 @@
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-input/iron-input.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-styles/shadow.html">
 <link rel="import" href="../x-theme/x-theme.html">
 
@@ -15,26 +16,33 @@
         align-items: center;
         position: relative;
         height: 56px;
-      }
-      :host > * {
-        @apply(--layout-fit);
-      }
-
-      iron-icon {
-        z-index: 1;
-        position: absolute;
         color: var(--primary-text-color);
-        left: 24px;
-        top: 0;
-        transition: color 0.28s;
-        margin: 16px 0;
-        pointer-events: none;
       }
-      :host([active]) iron-icon {
+      :host([active]) {
         color: var(--primary-background-color);
       }
 
+      .overlay {
+        @apply(--layout-fit);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 8px;
+      }
+      iron-icon {
+        z-index: 1;
+        top: 0;
+        transition: color 0.28s;
+        margin: 16px 0 16px 16px;
+        pointer-events: none;
+      }
+
+      paper-icon-button {
+        z-index: 1;
+      }
+
       input {
+        @apply(--layout-fit);
         background: var(--highlighted-color);
         border: none;
         outline: none;
@@ -55,16 +63,25 @@
         color: var(--primary-background-color);
         @apply(--shadow-elevation-3dp);
       }
+      :host([has-value]) input {
+        padding-right: 56px;
+      }
     </style>
     <div class="overlay">
       <iron-icon
         icon="icons:search">
       </iron-icon>
+      <paper-icon-button
+        hidden$="[[!hasValue]]"
+        icon="clear"
+        on-tap="clear">
+      </paper-icon-button>
     </div>
     <input
       is="iron-input"
       bind-value="{{value}}"
       placeholder="Search Patterns"
+      maxlength="80"
       on-focus="_handleFocus"
       on-blur="_handleBlur">
   </template>
@@ -75,6 +92,12 @@
         value: {
           type: String,
           notify: true
+        },
+
+        hasValue: {
+          type: Boolean,
+          computed: "_computeHasValue(value)",
+          reflectToAttribute: true
         },
 
         active: {
@@ -88,8 +111,16 @@
         }
       },
 
+      clear: function() {
+        this.set("value", "");
+      },
+
       _computeActive: function(value, _hasFocus) {
         return !!value || _hasFocus;
+      },
+
+      _computeHasValue: function(value) {
+        return !!value;
       },
 
       _handleFocus: function() {
