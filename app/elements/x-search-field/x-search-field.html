@@ -14,42 +14,38 @@
         flex: 1;
         display: flex;
         align-items: center;
-        position: relative;
         height: 56px;
+        padding: 0 8px;
+        background: var(--highlighted-color);
         color: var(--primary-text-color);
+        border-radius: 4px;
       }
-      :host([active]) {
+      :host([focused]), :host([has-value]) {
+        background: white;
         color: var(--primary-background-color);
+        @apply(--shadow-elevation-3dp);
       }
 
-      .overlay {
-        @apply(--layout-fit);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 8px;
-      }
       iron-icon {
         z-index: 1;
         top: 0;
         transition: color 0.28s;
-        margin: 16px 0 16px 16px;
+        margin: 0 16px;
         pointer-events: none;
       }
 
       paper-icon-button {
         z-index: 1;
+        --paper-icon-button-ink-color: var(--primary-background-color);
       }
 
       input {
-        @apply(--layout-fit);
-        background: var(--highlighted-color);
+        flex: 1;
+        margin: 0 8px;
         border: none;
         outline: none;
-        border-radius: 4px;
-        width: 100%;
+        background: none;
         color: var(--secondary-text-color);
-        padding: 0 16px 0 72px;
         box-sizing: border-box;
         font-size: 16px;
         font-weight: 100;
@@ -58,32 +54,27 @@
           color 0.28s,
           box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
       }
-      :host([active]) input, input:focus {
-        background: white;
+      :host([focused]) input, :host([has-value]) input {
         color: var(--primary-background-color);
-        @apply(--shadow-elevation-3dp);
-      }
-      :host([has-value]) input {
-        padding-right: 56px;
       }
     </style>
-    <div class="overlay">
-      <iron-icon
-        icon="icons:search">
-      </iron-icon>
-      <paper-icon-button
-        hidden$="[[!hasValue]]"
-        icon="clear"
-        on-tap="clear">
-      </paper-icon-button>
-    </div>
+
+    <iron-icon
+      icon="icons:search">
+    </iron-icon>
     <input
+      id="input"
       is="iron-input"
       bind-value="{{value}}"
       placeholder="Search Patterns"
       maxlength="80"
       on-focus="_handleFocus"
       on-blur="_handleBlur">
+    <paper-icon-button
+      hidden$="[[!hasValue]]"
+      icon="clear"
+      on-tap="clear">
+    </paper-icon-button>
   </template>
   <script>
     Polymer({
@@ -100,35 +91,43 @@
           reflectToAttribute: true
         },
 
-        active: {
+        focused: {
           type: Boolean,
-          computed: "_computeActive(value, _hasFocus)",
+          observer: "_focusedChanged",
           reflectToAttribute: true
-        },
-
-        _hasFocus: {
-          type: Boolean
         }
+      },
+
+      listeners: {
+        "tap": "_handleTap"
       },
 
       clear: function() {
         this.set("value", "");
       },
 
-      _computeActive: function(value, _hasFocus) {
-        return !!value || _hasFocus;
-      },
-
       _computeHasValue: function(value) {
         return !!value;
       },
 
+      _handleTap: function() {
+        this.set("focused", true);
+      },
+
+      _focusedChanged: function(focus) {
+        if (focus) {
+          this.$.input.focus();
+        } else {
+          this.$.input.blur();
+        }
+      },
+
       _handleFocus: function() {
-        this.set("_hasFocus", true);
+        this.set("focused", true);
       },
 
       _handleBlur: function() {
-        this.set("_hasFocus", false);
+        this.set("focused", false);
       }
     });
   </script>
