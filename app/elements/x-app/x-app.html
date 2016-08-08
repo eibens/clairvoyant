@@ -89,24 +89,16 @@
       </x-bar-chart>
 
       <main>
-        <array-selector
-          id="selector"
-          items="{{patterns}}"
-          selected="{{selected}}"
-          multi toggle>
-        </array-selector>
-
         <x-pattern-selection
           class="section"
-          patterns="{{selected}}"
-          on-item-tap="_handlePatternTap">
+          patterns="{{selected}}">
         </x-pattern-selection>
 
         <x-pattern-browser
           class="section"
           patterns="{{patterns}}"
-          query="{{query}}"
-          on-item-tap="_handlePatternTap">
+          selected="{{selected}}"
+          query="{{query}}">
         </x-pattern-browser>
       </main>
     </paper-header-panel>
@@ -134,20 +126,6 @@
           type: Array,
           notify: true
         }
-      },
-
-      _handlePatternTap: function(event) {
-        var model = event.detail.model;
-        var item = model.item;
-        var selector = this.$.selector;
-
-        // Toggle selection.
-        selector.select(item);
-
-        // Mark pattern as selected.
-        var selected = selector.isSelected(item);
-        var index = this.patterns.indexOf(model.item);
-        this.set("patterns." + index + ".selected", selected);
       }
     });
   </script>

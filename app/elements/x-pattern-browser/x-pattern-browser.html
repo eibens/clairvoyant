@@ -91,6 +91,15 @@
         <span>[[_count]]</span>
       </h3>
     </header>
+
+    <array-selector
+      hidden
+      id="selector"
+      items="{{patterns}}"
+      selected="{{selected}}"
+      multi toggle>
+    </array-selector>
+
     <nav>
       <x-search-field
         value="{{query}}">
@@ -109,6 +118,7 @@
         </paper-menu>
       </paper-menu-button>
     </nav>
+
     <x-pattern-list
       id="list"
       hidden$="[[_resultEmpty]]"
@@ -117,8 +127,10 @@
       count="{{_count}}"
       empty="{{_empty}}"
       result-count="{{_resultCount}}"
-      result-empty="{{_resultEmpty}}">
+      result-empty="{{_resultEmpty}}"
+      on-item-tap="_handleItemTap">
     </x-pattern-list>
+
     <div
       class="placeholder"
       hidden$="[[!_resultEmpty]]">
@@ -153,6 +165,11 @@
           observer: "_update"
         },
 
+        selected: {
+          type: Array,
+          notify: true
+        },
+
         _count: Number,
         _empty: Boolean,
         _resultCount: Number,
@@ -180,6 +197,16 @@
         this.set("query", "");
       },
 
+      select: function(pattern) {
+        var selector = this.$.selector;
+        selector.select(pattern);
+
+        // Mark pattern as selected.
+        var selected = selector.isSelected(pattern);
+        var index = this.patterns.indexOf(pattern);
+        this.set("patterns." + index + ".selected", selected);
+      },
+
       _update: function() {
         this.$.list.update();
       },
@@ -202,6 +229,10 @@
       _sortModeChanged: function(value) {
         var byName = value == "name";
         this.set("alphabetical", byName);
+      },
+
+      _handleItemTap: function(event) {
+        this.select(event.detail.model.item);
       }
     });
   </script>

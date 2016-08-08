@@ -30,7 +30,8 @@
       id="list"
       hidden$="[[_empty]]"
       items="{{patterns}}"
-      empty="{{_empty}}">
+      empty="{{_empty}}"
+      on-item-tap="_handleItemTap">
     </x-pattern-list>
   </template>
 
@@ -45,6 +46,13 @@
         },
 
         _empty: Boolean
+      },
+
+      _handleItemTap: function(event) {
+        var pattern = event.detail.model.item;
+        var index = this.patterns.indexOf(pattern);
+        this.set("patterns." + index + ".selected", false);
+        this.splice("patterns", index, 1);
       }
     });
   </script>
