@@ -122,7 +122,7 @@
       },
 
       _computeMatchBarStyle: function(section, pattern) {
-        var background = this.$.colors.getColor(pattern.name);
+        var background = this.$.colors.colorForString(pattern.name);
         var index = this.sections.indexOf(section);
         var count = pattern.matches[index];
         var height = this._calcBarHeightStyle(count, this._maximumMatches);
