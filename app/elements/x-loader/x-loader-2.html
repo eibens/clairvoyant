@@ -1,0 +1,80 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../x-app/x-app-wrapper.html">
+
+<dom-module id="x-loader">
+  <template>
+    <iron-ajax
+      auto
+      url="[[url]]"
+      last-response="{{_data}}">
+    </iron-ajax>
+    <x-app-wrapper
+      id="app"
+      data="[[_data]]"
+      state="{{_state}}">
+    </x-app-wrapper>
+  </template>
+  <script>
+    Polymer({
+      is: "x-loader",
+
+      properties: {
+        url: String,
+
+        _data: {
+          type: Object,
+          observer: "_dataChanged",
+          value: {
+            patterns: [],
+            sections: []
+          }
+        },
+
+        _state: {
+          type: Object,
+          value: {
+            selected: [],
+            query: ""
+          }
+        }
+      },
+
+      observers: [
+        "_stateChanged(_state.*)"
+      ],
+
+      _dataChanged: function(change) {
+        this._loadState();
+      },
+
+      _stateChanged: function(change) {
+        var stateString = this._serializeState(change.base);
+        this.debounce("push-state", function() {
+          window.history.replaceState(null, "Clairvoyant", stateString)
+        }, 100);
+      },
+
+      _serializeState: function(state) {
+        return state.selected.map(function(pattern) {
+          return encodeURIComponent(pattern.name)
+            .replace(/%20/g, '+');
+        }).join(",");
+      },
+
+      _loadState: function() {
+        var self = this;
+        window.location.pathname
+          .substr(1)
+          .replace(/\+/g, '%20')
+          .split(',')
+          .map(function(x) {
+            return decodeURIComponent(x);
+          })
+          .forEach(function(name) {
+            self.$.app.selectByName(name);
+          });
+      }
+    });
+  </script>
+</dom-module>

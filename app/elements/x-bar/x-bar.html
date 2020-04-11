@@ -1,0 +1,82 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../x-color-selector/x-color-selector.html">
+<link rel="import" href="../x-theme/x-theme.html">
+
+<dom-module id="x-bar">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        position: relative;
+        --x-bar-fill: { };
+      }
+      .fill {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        transition: height 300ms;
+        background: var(--accent-color);
+        @apply(--x-bar-fill);
+      }
+    </style>
+
+    <x-color-selector id="colors"></x-color-selector>
+    <div
+      class="fill"
+      style$="[[_style]]">
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: "x-bar",
+
+      properties: {
+        max: {
+          type: Number,
+          value: 1
+        },
+
+        value: {
+          type: Number,
+          value: 0
+        },
+
+        label: {
+          type: String,
+          value: null
+        },
+
+        colored: {
+          type: Boolean,
+          value: false
+        },
+
+        _style: {
+          type: String,
+          computed: "_computeStyle(max, value, label, colored)"
+        }
+      },
+
+      _computeStyle: function(max, value, label, colored) {
+        var percent = this._computePercent(value, max);
+        var style = "height:" + percent + "%";
+        if (colored) {
+          var color = this.$.colors.colorForString(label);
+          style += ";background-color:" + color;
+        }
+        return style;
+      },
+
+      _computePercent: function(value, max) {
+        if (max == 0) return 0;
+        var ratio = this._clamp(value / max, 0.0, 1.0);
+        return parseInt(Math.round(ratio * 100));
+      },
+
+      _clamp: function(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+    });
+  </script>
+</dom-module>

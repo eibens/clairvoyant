@@ -1,7 +1,7 @@
 worm=[Ww]orm
 bug=[Bb]ug
 hero=[Hh]ero
-villian=[Vv]illian
+villain=[Vv]illain
 cape=[Cc]ape
 parahuman=[Pp]arahuman
 shard=[Ss]hard

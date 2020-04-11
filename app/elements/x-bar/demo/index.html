@@ -1,0 +1,126 @@
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+    <title>x-bar demo</title>
+
+    <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../../bower_components/iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../../bower_components/iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+    <link rel="import" href="../../../bower_components/paper-styles/color.html">
+    <link rel="import" href="../x-bar.html">
+    <link rel="import" href="../x-bar-group.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+      .bars {
+        @apply(--layout-horizontal);
+      }
+      x-bar {
+        width: 30px;
+        height: 100px;
+        margin: 0 2px;
+        flex: none;
+      }
+      x-bar-group {
+        width: 400px;
+        height: 100px;
+      }
+    </style>
+  </head>
+
+  <body unresolved>
+    <h3>Some bars</h3>
+    <demo-snippet>
+      <template>
+        <div class="bars">
+          <x-bar value="6" max="10"></x-bar>
+          <x-bar value="8" max="10"></x-bar>
+          <x-bar value="3" max="10"></x-bar>
+        </div>
+      </template>
+    </demo-snippet>
+
+    <h3>They can be styled using custom properties</h3>
+    <demo-snippet>
+      <template>
+        <style is="custom-style">
+          x-bar.fancy {
+            background: var(--paper-grey-200);
+            --x-bar-fill: {
+              border-top-left-radius: 3px;
+              border-top-right-radius: 3px;
+              background: var(--paper-blue-a700);
+              margin: 0 4px;
+              transition: transform 300ms;
+            };
+          }
+        </style>
+        <div class="bars">
+          <x-bar class="fancy" max="10" value="6"></x-bar>
+          <x-bar class="fancy" max="10" value="8"></x-bar>
+          <x-bar class="fancy" max="10" value="3"></x-bar>
+        </div>
+      </template>
+    </demo-snippet>
+
+    <h3>Enable automatic coloring by setting a <i>label</i> and the <i>colored</i> flag</h3>
+    <p>Two bars always have the same color, if the same label is used.</p>
+    <demo-snippet>
+      <template>
+        <div class="bars">
+          <x-bar max="10" value="6" label="apples" colored></x-bar>
+          <x-bar max="10" value="8" label="pears" colored></x-bar>
+          <x-bar max="10" value="3" label="bananas" colored></x-bar>
+        </div>
+      </template>
+    </demo-snippet>
+
+    <h3>Bar height is animated</h3>
+    <demo-snippet>
+      <template>
+        <div class="bars">
+          <x-bar class="random"></x-bar>
+          <x-bar class="random"></x-bar>
+          <x-bar class="random"></x-bar>
+          <x-bar class="random"></x-bar>
+          <x-bar class="random"></x-bar>
+        </div>
+        <script>
+          document.addEventListener("WebComponentsReady", function() {
+            var randomize = function() {
+              document.querySelectorAll('x-bar.random').forEach(function(bar) {
+                bar.value = Math.random();
+              });
+            };
+            randomize();
+            setInterval(randomize, 1000);
+          });
+        </script>
+      </template>
+    </demo-snippet>
+
+    <h3>Bar group</h3>
+    <demo-snippet>
+      <template>
+        <x-bar-group id="group" max="10" colored></x-bar-group>
+        <script>
+          document.addEventListener("WebComponentsReady", function() {
+            document.querySelector("#group").items = [
+              { value: 4, label: "a" },
+              { value: 8, label: "b" },
+              { value: 9, label: "c" },
+              { value: 7, label: "d" },
+              { value: 3, label: "e" }
+            ];
+          });
+        </script>
+      </template>
+    </demo-snippet>
+  </body>
+</html>

@@ -1,0 +1,53 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="x-bar.html">
+
+<dom-module id="x-bar-group">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        position: relative;
+      }
+      x-bar {
+        margin-left: 2px;
+        flex: 1;
+      }
+      x-bar:first-of-type {
+        margin-left: 0;
+      }
+    </style>
+
+    <template
+      is="dom-repeat"
+      items="[[items]]">
+      <x-bar
+        max="[[max]]"
+        value="[[item.value]]"
+        label="[[item.label]]"
+        colored="[[colored]]">
+      </x-bar>
+    </template>
+  </template>
+  <script>
+    Polymer({
+      is: "x-bar-group",
+
+      properties: {
+        max: {
+          type: Number,
+          value: 1
+        },
+
+        items: {
+          type: Array,
+          value: null
+        },
+
+        colored: {
+          type: Boolean,
+          value: false
+        }
+      }
+    });
+  </script>
+</dom-module>
